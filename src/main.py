@@ -2,7 +2,7 @@ from netmiko import ConnectHandler
 
 huawei_gpon_olt = {
     'device_type' : 'huawei_olt_telnet',
-    'ip' : '192.168.209.209',
+    'ip' : '192.168.100.24',
     'username' : 'optomenoc',
     'password' : 'letmein@123',
     'port' : 23
