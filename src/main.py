@@ -11,4 +11,5 @@ huawei_gpon_olt = {
 net_connect = ConnectHandler(**huawei_gpon_olt)
 net_connect.enable()
 output = net_connect.send_command_expect('display ont autofind all')
-print(output)
+target_serial = input("Enter the serial: ")
+initial_search = e
