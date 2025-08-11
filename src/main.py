@@ -1,34 +1,68 @@
-#!/bin/bash
+from netmiko import ConnectHandler
+import pyfiglet, termcolor, sys
+import ont_add, config_srv_port
 
-# Replace these with your actual OLT CLI login details
-OLT_IP="192.168.209.209"
-OLT_USER="root"
-OLT_PASS="admin"
+def main():
+    intro_text = pyfiglet.figlet_format("VOID","slant")
+    colored_intro_text = termcolor.colored(intro_text,"green")
+    tagline = termcolor.colored("Your Network, Assimilated", "green")
+    print(colored_intro_text)
+    print(tagline)
+    print("\n\n")
+    print("Welcome to VOID. Interact with huawei olt easily")
 
-# OLT Interface details
-PON_PORT="gpon-olt_1/1/1"
-LINE_PROFILE_ID="0"
-SRV_PROFILE_ID="0"
+    while True:
+        try:
+            olt_ip = input("Enter the huawei olt ip: ")
+            net_connect = connect_to_olt(olt_ip)
+            print(net_connect)
+            break
+        except Exception:
+            print("IP address invalid! Please try again")
+        
+        
 
-# Login to OLT and get unconfigured ONUs
-onu_sn=$(sshpass -p "$OLT_PASS" ssh -o StrictHostKeyChecking=no $OLT_USER@$OLT_IP "
-enable
-show gpon onu uncfg | include $PON_PORT
-" | grep "$PON_PORT" | awk '{print $2}' | head -n 1)
+    while True:
+        option = input("1. Add an ONU\n2. Exit\nChoose an option number: ")
+        if option not in ['1','2']:
+            print("Enter a valid option!")
+            continue
+        match option:
+            case '1':
+                config_srv_port.config_service_port(net_connect)
+            case '2':
+                break
 
-if [ -z "$onu_sn" ]; then
-  echo "❌ No unconfigured ONU found on $PON_PORT."
-  exit 1
-fi
 
-echo "✅ Found ONU: $onu_sn"
 
-# Configure ONU
-sshpass -p "$OLT_PASS" ssh -o StrictHostKeyChecking=no $OLT_USER@$OLT_IP "
-enable
-config
-interface $PON_PORT
-onu add $onu_sn sn-auth $onu_sn omci ont-lineprofile-id $LINE_PROFILE_ID ont-srvprofile-id $SRV_PROFILE_ID
-"
+def connect_to_olt(ip):
+    huawei_gpon_olt = {
+        'device_type' : 'huawei_olt_telnet',
+        'ip' : ip,
+        'username' : 'optomenoc',
+        'password' : 'letmein@123',
+        'port' : 23
+    }
+    net_connect = ConnectHandler(**huawei_gpon_olt)
+    net_connect.enable()
+    net_connect.config_mode()
+    return net_connect
 
-echo "✅ ONU $onu_sn configured successfully on $PON_PORT"
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit("\nQuiting the application...")
+# huawei_gpon_olt = {
+#     'device_type' : 'huawei_olt_telnet',
+#     'ip' : '192.168.100.24',
+#     'username' : 'optomenoc',
+#     'password' : 'letmein@123',
+#     'port' : 23
+# }
+
+# net_connect = ConnectHandler(**huawei_gpon_olt)
+# net_connect.enable()
+# output = net_connect.send_command_expect('display ont autofind all')
+# target_serial = input("Enter the serial: ")

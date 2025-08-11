@@ -1,0 +1,21 @@
+----------------------------------------------------------------------
+Number : 1
+F/S/P : 0/1/1
+Ont SN : 6877687714852900 (GPON14852900)
+Password :
+VenderID : HWTC
+Ont Version : 130C4600
+Ont SoftwareVersion : V1R002C00
+Ont EquipmentID : 245
+Ont autofind time : 2010-12-10 14:59:10
+----------------------------------------------------------------------
+Number : 2
+F/S/P : 0/1/1
+Ont SN : 6877687714852901
+Password :
+VenderID : HWTC
+Ont Version : 130C4600
+Ont SoftwareVersion : V1R002C00
+Ont EquipmentID : 245
+Ont autofind time : 2010-12-10 14:59:12
+----------------------------------------------------------------------
