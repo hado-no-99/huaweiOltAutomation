@@ -46,18 +46,23 @@ def add_ont(net_connect):
     # we will send the above command using netmiko
     ont_ID_pattern = re.search(r"ONTID\s+:\s*(\d+)",send_ont_commands)
     print([ont_ID_pattern[1]], vlan, targetSearch[1], targetSearch[2], targetSearch[3])
+    gemport_details = fetch_gemport(net_connect,lineProfile,vlan)
     return {
         'ont_id' : ont_ID_pattern[1],
         'vlan' : vlan,
         'board' : targetSearch[1],
         'card' : targetSearch[2],
         'port' : targetSearch[3],
+        'gemport_index' : gemport_details[0],
+        'gemport_ID' : gemport_details[1]
     }
 
 
-# def fetch_gemport(net_connect, lineprofile, vlan):
-#     line_profile_details = net_connect.send_command(f"display current-configuration | begin ont-lineprofile gpon profile-id {lineprofile}")
-#     gemport_pattern = fr"profile-id {lineprofile}.gem mapping (\d) (\d) vlan {vlan}"
+def fetch_gemport(net_connect, lineprofile, vlan):
+    matching_text = net_connect.send_command(f"display current-configuration | begin ont-lineprofile gpon profile-id {lineprofile}",read_timeout=30)
+    gemport_pattern = fr"profile-id {lineprofile}[\s\S]*?gem mapping (\d+) (\d+) vlan ({vlan})"
+    gemport_match = re.search(gemport_pattern,matching_text,re.DOTALL)
+    return [gemport_match[1],gemport_match[2],gemport_match[3]]
 
 
 if __name__ == "__main__":

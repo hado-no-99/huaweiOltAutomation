@@ -135,6 +135,7 @@ output_string = """ont-lineprofile gpon profile-id 0 profile-name "line-profile_
 #
 """
 
-gemport_pattern = fr"profile-id 0[\s\S]*gem mapping (\d) (\d) vlan 930[\s\S]*commit"
-gemport_match = re.search(gemport_pattern,output_string,re.DOTALL)
-print(gemport_match[0])
+matching_text = ""
+gemport_pattern = fr"profile-id {"0"}[\s\S]*?gem mapping (\d) (\d) vlan ({"930"})"
+gemport_match = re.search(gemport_pattern,matching_text,re.DOTALL)
+print([gemport_match[1],gemport_match[2],gemport_match[3]])
